@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Contribution</title>
+  <style>
+    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: #f5f6f8; color: #1f2328; line-height: 1.5; }
+    main { max-width: 640px; margin: 0 auto; padding: 24px 16px; }
+    button { font: inherit; padding: 8px 16px; border: 1px solid #2563eb; border-radius: 6px; background: #2563eb; color: #fff; cursor: pointer; }
+    .result { font-size: 1.1rem; }
+    .error { color: #c62828; font-weight: 600; }
+    a { color: #2563eb; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Team Contribution</h1>
+    <p>This page was added through a Pull Request by a teammate.</p>
+
+    <button type="button" id="load-contributor">Show Contributor</button>
+
+    <p class="result">Contributor Student ID: <span id="contributor-student-id"></span></p>
+    <p id="contributor-error" class="error" hidden></p>
+
+    <p><a href="index.html">&larr; Back to Task Manager</a></p>
+  </main>
+
+  <script>
+    const button = document.getElementById('load-contributor');
+    const output = document.getElementById('contributor-student-id');
+    const errorBox = document.getElementById('contributor-error');
+
+    button.addEventListener('click', async () => {
+      errorBox.hidden = true;
+      output.textContent = 'Loading…';
+      try {
+        const res = await fetch('contribution.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Could not load contribution.json (HTTP ${res.status}).`);
+        const data = await res.json();
+        if (!data.contributorStudentId) throw new Error('contributorStudentId is missing in contribution.json.');
+        output.textContent = data.contributorStudentId;
+      } catch (err) {
+        output.textContent = '';
+        errorBox.textContent = err.message;
+        errorBox.hidden = false;
+      }
+    });
+  </script>
+</body>
+</html>
