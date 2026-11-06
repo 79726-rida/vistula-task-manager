@@ -20,7 +20,7 @@
 
     <button type="button" id="load-contributor">Show Contributor</button>
 
-    <p class="result">Contributor Student ID: <span id="contributor-student-id"></span></p>
+    <p class="result">Contributor Student ID(s): <span id="contributor-student-id"></span></p>
     <p id="contributor-error" class="error" hidden></p>
 
     <p><a href="index.html">&larr; Back to Task Manager</a></p>
@@ -38,8 +38,9 @@
         const res = await fetch('contribution.json', { cache: 'no-store' });
         if (!res.ok) throw new Error(`Could not load contribution.json (HTTP ${res.status}).`);
         const data = await res.json();
-        if (!data.contributorStudentId) throw new Error('contributorStudentId is missing in contribution.json.');
-        output.textContent = data.contributorStudentId;
+        const ids = data.contributorStudentIds || (data.contributorStudentId ? [data.contributorStudentId] : []);
+        if (!ids.length) throw new Error('contributorStudentIds is missing in contribution.json.');
+        output.textContent = ids.join(', ');
       } catch (err) {
         output.textContent = '';
         errorBox.textContent = err.message;
